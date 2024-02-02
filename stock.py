@@ -43,7 +43,7 @@ class Gestion(Database):
         self.executeQuery(query, params)
 
     def update_product(self, name, description, price, quantity, id_category, id):
-        query = f'UPDATE product SET name=%s, description=%s, price=%s, quantity=%s, id_category=%s WHERE id=%s'
+        query = 'UPDATE product SET name=%s, description=%s, price=%s, quantity=%s, id_category=%s WHERE id=%s'
         params = (name, description, price, quantity, id_category, id)
         self.executeQuery(query, params)
 
@@ -66,3 +66,4 @@ class Gestion(Database):
         query = f'SELECT price FROM product WHERE id=%s'
         params = (id,)
         return self.fetch(query, params)
+

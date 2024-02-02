@@ -8,6 +8,8 @@ class Afficher_products(Element):
         self.menu_run = True
         self.showProduct_run = False
         self.add_product_run = False
+        self.liste_product_run = False
+        self.modify_delete_run = False
         self.gestion = Gestion()
         self.list_product = self.gestion.all_product()
         self.list_category = self.gestion.read_categories()
@@ -34,7 +36,9 @@ class Afficher_products(Element):
                         self.display_add_product()
                         self.menu_run = False
                     elif menu_button3_rect.collidepoint(event.pos):
-                        input_name = 2
+                        self.liste_product_run = True
+                        self.liste_products()
+                        self.menu_run = False
 
             self.img(600, 350, 1200, 700, 'background')
             self.draw_overlay((120,120,120,30), 600, 400, 1100, 500)
@@ -202,7 +206,7 @@ class Afficher_products(Element):
             self.button_rect(self.white, 300, 590, 450 ,70, 5)
             self.simple_rect(self.black, 300, 590, 450, 70, 3, 5)
             if self.category_choose == "":
-                self.texte(20, "Veuillez selectionner une catégrie à droite", self.black,300, 590)
+                self.texte(20, "Veuillez selectionner une catégrie à droite", self.grey,300, 590)
             else:
                 self.texte(20, self.display_choose, self.black,300, 590)
 
@@ -262,4 +266,165 @@ class Afficher_products(Element):
                 else:
                     self.back_menu = self.button_rect(self.grey, 600, 400, 165, 60, 10)
                 self.texte(25, f"Retour menu", (self.black), 600, 400)
+            self.update()
+
+    def liste_products(self):
+
+        while self.liste_product_run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                
+            self.img(600, 350, 1200, 700, 'background')
+            for i, product in enumerate(self.list_product):
+                column = i % 5
+                row = i // 5
+                product_select = self.simple_rect(self.grey, 110 + column * 240, 150 + row * 100, 200, 35, 4, 3)
+                self.texte(20, product[1], self.black, 110 + column * 240, 150 + row * 100)
+                if product_select.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                    self.modify_delete_run = True
+                    self.modify_delete(product)
+                    self.liste_product_run = False
+                
+            self.update()
+
+    def modify_delete(self, product):
+        name, description, prix, quantity,self.display_choose = product[1],product[2],str(product[3]),str(product[4]), product[5]
+        self.modif_name = pygame.Rect(0, 0, 0, 0)
+        self.modif_desc = pygame.Rect(0, 0, 0, 0)
+        self.modif_prix = pygame.Rect(0, 0, 0, 0)
+        self.modif_quant = pygame.Rect(0, 0, 0, 0)
+        self.modif_categ = pygame.Rect(0, 0, 0, 0)
+        self.cate = 1
+        self.category_choose = 0
+        for category in self.list_category:
+            if category[1] == product[5]:
+                self.category_choose = category[0]
+
+        while self.modify_delete_run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.modif_name.collidepoint(event.pos):
+                        self.cate = 1
+                    elif self.modif_desc.collidepoint(event.pos):
+                        self.cate = 2
+                    elif self.modif_prix.collidepoint(event.pos):
+                        self.cate = 3
+                    elif self.modif_quant.collidepoint(event.pos):
+                        self.cate = 4
+                    elif self.modif_categ.collidepoint(event.pos):
+                        self.cate = 5
+                    elif self.update_button.collidepoint(event.pos):
+                        print(str(name), str(description), int(prix), int(quantity), int(self.category_choose), product[0])
+                        self.gestion.update_product(str(name), str(description), int(prix), int(quantity), int(self.category_choose), product[0])
+                    elif self.back_menu.collidepoint(event.pos):
+                        self.menu_run = True
+                        self.menu()
+                        self.add_product_run = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        if self.cate == 1 :
+                            name = name[:-1]
+                        if self.cate == 2 :
+                            description = description[:-1]
+                        if self.cate == 3 :
+                            prix = prix[:-1]
+                        if self.cate == 4 :
+                            quantity = quantity[:-1]
+                    else:
+                        if self.cate == 1:
+                            if event.unicode.isalpha() and len(name) < 15:
+                                name += event.unicode
+                                name = name.capitalize()
+                        elif self.cate == 2:
+                            if event.unicode:
+                                description += event.unicode
+                                description = description
+                        elif self.cate == 3:
+                            if event.unicode.isdigit():
+                                prix += event.unicode
+                        elif self.cate == 4:
+                            if event.unicode.isdigit():
+                                quantity += event.unicode
+
+            self.img(600, 350, 1200, 700, 'background')
+
+
+            if self.modif_name.collidepoint(pygame.mouse.get_pos()):
+                self.modif_name = self.button_rect(self.darkblue, 200, 60, 180, 50 +10, 5)
+            else:
+                self.modif_name = self.button_rect(self.blue, 200, 60, 170, 50, 2)
+            self.texte(25, 'Modif. Nom', self.black, 200, 60 - 5)
+
+            if self.modif_desc.collidepoint(pygame.mouse.get_pos()):
+                self.modif_desc = self.button_rect(self.darkblue, 400, 60, 180 + 10, 50 +10, 5)
+            else:
+                self.modif_desc = self.button_rect(self.blue, 400, 60, 170, 50, 2)
+            self.texte(25, 'Modif. Desc', self.black, 400, 60 - 5)
+
+            if self.modif_prix.collidepoint(pygame.mouse.get_pos()):
+                self.modif_prix = self.button_rect(self.darkblue, 600, 60, 180 + 10, 50 +10, 5)
+            else:
+                self.modif_prix = self.button_rect(self.blue, 600, 60, 170, 50, 2)
+            self.texte(25, 'Modif. Prix', self.black, 600, 60 - 5)
+
+            if self.modif_quant.collidepoint(pygame.mouse.get_pos()):
+                self.modif_quant = self.button_rect(self.darkblue, 1000, 60, 180 + 10, 50 +10, 5)
+            else:
+                self.modif_quant = self.button_rect(self.blue, 1000, 60, 170, 50, 2)
+            self.texte(25, 'Modif. Quant', self.black, 1000, 60 - 5)
+            if self.modif_categ.collidepoint(pygame.mouse.get_pos()):
+                self.modif_categ = self.button_rect(self.darkblue, 800, 60, 180 + 10, 50 +10, 5)
+            else:
+                self.modif_categ = self.button_rect(self.blue, 800, 60, 170, 50, 2)
+            self.texte(25, 'Modif. Categ', self.black, 800, 60 - 5)
+         
+            self.texte(30, f"    {product[1]}", self.black, 600 ,150)
+
+            self.button_rect(self.white, 600, 300, 450 ,70, 5)
+            self.simple_rect(self.black, 600, 300, 450, 70, 3, 5)
+
+            if self.cate == 1:
+                self.texte(20, "Modifier le nom du produit :", self.black,600, 250)
+                self.texte(20, name, self.black,600, 300)
+            elif self.cate == 2:
+                self.texte(20, "Modifier la description du produit :", self.black,600, 250)
+                self.texte(20, description, self.black,600, 300)
+            elif self.cate == 3:
+                self.texte(20, "Modifier le prix du produit :", self.black,600, 250)
+                self.texte(20, prix, self.black,600, 300)
+            elif self.cate == 4:
+                self.texte(20, "Modifier la quantité du produit :", self.black,600, 250)
+                self.texte(20, quantity, self.black,600, 300)
+            elif self.cate == 5:
+                max_cate = len(self.list_category)
+                y = self.W // max_cate
+                i = 0
+                for category in self.list_category:
+                    category_select = self.button_rect(self.grey,100+  y * i, 400 , 150, 50, 1)
+                    self.texte(20, category[1], self.black, 100 + y * i,400)
+                    if category_select.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:   
+                        self.category_choose = category[0]
+                        self.display_choose = category [1]
+                        print(category[0], category[1])    
+                    i += 1
+                self.texte(20, "Modifier la catégorie du produit :", self.black,600, 250)
+                if self.category_choose == "":
+                    self.texte(20, "Veuillez selectionner une catégrie ci-dessous", self.grey,600, 300)
+                else:
+                    self.texte(20, self.display_choose, self.black,600, 300)
+                    
+            self.update_button = self.button_rect((self.blue), 600, 550, 200, 70, 5)
+            self.simple_rect((self.black), 600, 550, 200, 70,2, 5)
+            self.texte(20, 'Valider', self.black, 600, 550)
+
+            if self.back_menu.collidepoint(pygame.mouse.get_pos()):
+                self.back_menu = self.button_rect(self.darkblue, 1140, 55, 110, 55, 5)
+            else:
+                self.back_menu = self.button_rect(self.blue, 1140, 55, 100, 45, 2)
+            self.texte(25, 'Menu', self.black, 1140, 50)
             self.update()

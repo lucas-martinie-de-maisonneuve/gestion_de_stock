@@ -37,7 +37,7 @@ class Element(Screen):
         return button
    
     def img(self, x, y, largeur, hauteur, image_name):
-        image = pygame.image.load(f'img/{image_name}.png')
+        image = pygame.image.load(f'files/img/{image_name}.png')
         image = pygame.transform.scale(image, (largeur, hauteur))
         self.Fenetre.blit(image, (x - image.get_width()//2, y - image.get_height()//2))
 
