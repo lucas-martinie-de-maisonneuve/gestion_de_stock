@@ -2,7 +2,7 @@ import pygame
 from stock import Gestion
 from element import Element
 
-class Afficher_products(Element):
+class Display(Element):
     def __init__(self):
         Element.__init__(self)
         self.menu_run = True
