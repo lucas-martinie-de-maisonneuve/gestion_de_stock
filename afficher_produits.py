@@ -15,12 +15,12 @@ class Afficher_products(Element):
         self.list_category = self.gestion.read_categories()
         self.category_choose = ""        
         self.back_menu = pygame.Rect(0, 0, 0, 0)
+        self.deleted = False
 
     def menu(self):
         menu_button1_rect = pygame.Rect(0, 0, 0, 0)
         menu_button2_rect = pygame.Rect(0, 0, 0, 0)
         menu_button3_rect = pygame.Rect(0, 0, 0, 0)
-        
         while self.menu_run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -47,25 +47,36 @@ class Afficher_products(Element):
             self.texte(30, 'Tableau de bord', self.black, 250, 200)
             
             if menu_button1_rect.collidepoint(pygame.mouse.get_pos()):
-                menu_button1_rect = self.button_rect(self.darkblue, 200, 75, 185, 60, 5)
+                menu_button1_rect = self.button_rect(self.darkblue, 200, 75, 240, 60, 5)
+                self.simple_rect(self.black, 200, 75, 240, 60,2, 5)
             else:
-                menu_button1_rect = self.button_rect(self.blue, 200, 75, 175, 50, 2)
-            self.texte(30, 'Fiches', self.black, 200, 75)
+                menu_button1_rect = self.button_rect(self.blue, 200, 75, 230, 50, 5)
+                self.simple_rect(self.black, 200, 75, 230, 50,2, 5)
+            self.texte(30, 'Liste produits', self.black, 200, 75)
 
             if menu_button2_rect.collidepoint(pygame.mouse.get_pos()):
-                menu_button2_rect = self.button_rect(self.darkblue, 600, 75, 185, 60, 5)
+                menu_button2_rect = self.button_rect(self.darkblue, 600, 75, 240, 60, 5)
+                self.simple_rect(self.black, 600, 75, 240, 60,2, 5)
+
             else:
-                menu_button2_rect = self.button_rect(self.blue, 600, 75, 175, 50, 2)
-            self.texte(30, 'Entrées', self.black, 600, 75)
+                menu_button2_rect = self.button_rect(self.blue, 600, 75, 230, 50, 5)
+                self.simple_rect(self.black, 600, 75, 230, 50,2, 5)
+            self.texte(30, 'Ajouter produit', self.black, 600, 75)
 
             if menu_button3_rect.collidepoint(pygame.mouse.get_pos()):
-                menu_button3_rect = self.button_rect(self.darkblue, 1000, 75, 185, 60, 5)
+                menu_button3_rect = self.button_rect(self.darkblue, 1000, 75, 240, 60, 5)
+                self.simple_rect(self.black, 1000, 75, 240, 60,2, 5)
             else:
-                menu_button3_rect = self.button_rect(self.blue, 1000, 75, 175, 50, 2)
-            self.texte(30, 'Sorties', self.black, 1000, 75)
+                menu_button3_rect = self.button_rect(self.blue, 1000, 75, 230, 50, 5)
+                self.simple_rect(self.black, 1000, 75, 230, 50,2, 5)
+            self.texte(30, 'Modifier produit', self.black, 1000, 75)
+            
+
             self.update()
 
+
     def showproduct(self):
+        self.list_product = self.gestion.all_product()
         while self.showProduct_run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -116,11 +127,16 @@ class Afficher_products(Element):
         all_info = False
         confirm = pygame.Rect(0, 0, 0, 0)
         confirm_message = False
+        self.back_menu_add = pygame.Rect(0, 0, 0, 0)
         while self.add_product_run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                if event.type == pygame.MOUSEBUTTONDOWN and self.back_menu_add.collidepoint(event.pos):
+                        self.menu_run = True
+                        self.menu()
+                        self.add_product_run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and not confirm_message:
                     if name_input.collidepoint(event.pos):
                         self.cate = 1
@@ -132,10 +148,6 @@ class Afficher_products(Element):
                         self.cate = 4
                     elif category_select.collidepoint(event.pos):
                         category_select = category[0]
-                    elif self.back_menu.collidepoint(event.pos):
-                        self.menu_run = True
-                        self.menu()
-                        self.add_product_run = False
                     elif all_info:
                         if confirm.collidepoint(event.pos) and all_info:
                             self.gestion.add_product(name, description, int(prix), int(quantity), int(self.category_choose))
@@ -168,10 +180,10 @@ class Afficher_products(Element):
 
             self.img(600, 350, 1200, 700, 'background')
 
-            if self.back_menu.collidepoint(pygame.mouse.get_pos()) and not confirm_message:
-                self.back_menu = self.button_rect(self.darkblue, 1100, 55, 160, 60, 5)
+            if self.back_menu_add.collidepoint(pygame.mouse.get_pos()) and not confirm_message:
+                self.back_menu_add = self.button_rect(self.darkblue, 1100, 55, 160, 60, 5)
             else:
-                self.back_menu = self.button_rect(self.blue, 1100, 55, 150, 50, 2)
+                self.back_menu_add = self.button_rect(self.blue, 1100, 55, 150, 50, 2)
             self.texte(30, 'Menu', self.black, 1100, 55)
 
             if self.cate == 1:
@@ -261,15 +273,15 @@ class Afficher_products(Element):
                 self.button_rect(self.blue, 600, 300, 800, 400, 15)
                 self.simple_rect(self.black, 600, 300, 800, 400, 5 ,15)
                 self.texte(30, f"Le produit {name} a bien été ajouté", (self.black), 600, 280)
-                if self.back_menu.collidepoint(pygame.mouse.get_pos()):
-                    self.back_menu = self.button_rect(self.darkblue, 600, 400, 175,70, 10)
+                if self.back_menu_add.collidepoint(pygame.mouse.get_pos()):
+                    self.back_menu_add = self.button_rect(self.darkblue, 600, 400, 175,70, 10)
                 else:
-                    self.back_menu = self.button_rect(self.grey, 600, 400, 165, 60, 10)
+                    self.back_menu_add = self.button_rect(self.grey, 600, 400, 165, 60, 10)
                 self.texte(25, f"Retour menu", (self.black), 600, 400)
             self.update()
 
     def liste_products(self):
-
+        self.list_product = self.gestion.all_product()
         while self.liste_product_run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -296,8 +308,12 @@ class Afficher_products(Element):
         self.modif_prix = pygame.Rect(0, 0, 0, 0)
         self.modif_quant = pygame.Rect(0, 0, 0, 0)
         self.modif_categ = pygame.Rect(0, 0, 0, 0)
+        self.delete_button_confirm = pygame.Rect(0, 0, 0, 0)
+        self.back_menu_modify = pygame.Rect(0, 0, 0, 0)
         self.cate = 1
         self.category_choose = 0
+        confirm_delete = False
+        deleted = False
         for category in self.list_category:
             if category[1] == product[5]:
                 self.category_choose = category[0]
@@ -307,7 +323,7 @@ class Afficher_products(Element):
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and not confirm_delete:
                     if self.modif_name.collidepoint(event.pos):
                         self.cate = 1
                     elif self.modif_desc.collidepoint(event.pos):
@@ -318,13 +334,20 @@ class Afficher_products(Element):
                         self.cate = 4
                     elif self.modif_categ.collidepoint(event.pos):
                         self.cate = 5
-                    elif self.update_button.collidepoint(event.pos):
+                    elif self.update_button.collidepoint(event.pos) :
                         print(str(name), str(description), int(prix), int(quantity), int(self.category_choose), product[0])
                         self.gestion.update_product(str(name), str(description), int(prix), int(quantity), int(self.category_choose), product[0])
-                    elif self.back_menu.collidepoint(event.pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.back_menu_modify.collidepoint(event.pos):
                         self.menu_run = True
                         self.menu()
-                        self.add_product_run = False
+                        self.modify_delete_run = False
+                    elif self.delete_button.collidepoint(event.pos):
+                        confirm_delete = True
+                    elif self.delete_button_confirm.collidepoint(event.pos):
+                        self.gestion.remove_product(product[0])
+                        deleted = True
+                        confirm_delete = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
                         if self.cate == 1 :
@@ -343,7 +366,7 @@ class Afficher_products(Element):
                         elif self.cate == 2:
                             if event.unicode:
                                 description += event.unicode
-                                description = description
+                                description = description.capitalize()
                         elif self.cate == 3:
                             if event.unicode.isdigit():
                                 prix += event.unicode
@@ -421,10 +444,35 @@ class Afficher_products(Element):
             self.update_button = self.button_rect((self.blue), 600, 550, 200, 70, 5)
             self.simple_rect((self.black), 600, 550, 200, 70,2, 5)
             self.texte(20, 'Valider', self.black, 600, 550)
-
-            if self.back_menu.collidepoint(pygame.mouse.get_pos()):
-                self.back_menu = self.button_rect(self.darkblue, 1140, 55, 110, 55, 5)
+            
+            if not deleted:
+                self.delete_button = self.button_rect((self.red), 120, self.H -55, 200, 70, 5)
+                self.simple_rect((self.black), 120, self.H -55, 200, 70,2, 5)
+                self.texte(20, 'Supprimer', self.white, 120, self.H -55)
+            
+                if self.back_menu_modify.collidepoint(pygame.mouse.get_pos()):
+                    self.back_menu_modify = self.button_rect(self.darkblue, 1140, self.H -50, 110, 55, 5)
+                else:
+                    self.back_menu_modify = self.button_rect(self.blue, 1140, self.H -50, 100, 45, 2)
+                self.texte(25, 'Menu', self.black, 1140, self.H -55)
             else:
-                self.back_menu = self.button_rect(self.blue, 1140, 55, 100, 45, 2)
-            self.texte(25, 'Menu', self.black, 1140, 50)
+                self.button_rect(self.grey, 600,350, 800, 400, 10)
+                self.simple_rect(self.black, 600,350, 800, 400, 3, 10)
+                self.texte(25, f'{product[1]} a bien été supprimé', self.black, 600, 350)
+                if self.back_menu_modify.collidepoint(pygame.mouse.get_pos()):
+                    self.back_menu_modify = self.button_rect(self.darkblue, 600, 500, 200, 70, 5)
+                else:
+                    self.back_menu_modify = self.button_rect(self.blue, 600, 500, 200, 70, 5)
+
+                self.simple_rect((self.black), 600, 500, 200, 70,2, 5)
+                self.texte(20, 'Menu', self.black, 600, 500)
+            if confirm_delete:
+                self.button_rect(self.grey, 600,350, 800, 400, 10)
+                self.simple_rect(self.black, 600,350, 800, 400, 3, 10)
+                self.texte(25, f'Etes vous sur de vouloir supprimer {product[1]} ?', self.black, 600, 350)
+                self.delete_button_confirm = self.button_rect(self.red, 600, 500, 200, 70, 5)
+                self.simple_rect((self.black), 600, 500, 200, 70,2, 5)
+                self.texte(20, 'Supprimer', self.white, 600, 500)
+
+
             self.update()

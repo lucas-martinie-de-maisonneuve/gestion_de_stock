@@ -10,8 +10,8 @@ class Element(Screen):
         self.blue = (162, 210, 255)
         self.darkblue = (0, 180, 194)
         self.green = (149, 213, 178)
-        self.scroll = 1
-
+        self.red = (193, 18, 31)
+        self.scroll = 0
 
     def texte(self, texte_size, texte_content, color, x, y):
         pygame.font.init()
@@ -48,21 +48,23 @@ class Element(Screen):
 
     def event_scroll(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
-            if self.button_down.collidepoint(event.pos):
+            print(self.a)
+            if self.button_down.collidepoint(event.pos) and self.scroll_y > 220:
                 self.scroll += 50
-            if self.button_up.collidepoint(event.pos):
+            if self.button_up.collidepoint(event.pos) and self.scroll_y < 495:
                 self.scroll -= 50
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_DOWN and self.scroll_y < 495:
                 self.scroll -= 50
-            elif event.key == pygame.K_UP:
+            elif event.key == pygame.K_UP and self.scroll_y > 220:
                 self.scroll += 50
 
     def scroll_bar(self):
+            self.scroll_y = (400 - self.scroll) //2
             self.button_down = self.simple_rect(self.white, 1150, 150, 40, 40, 0, 0) 
             self.img(1150, 150, 40, 40, 'flecheup')
             self.button_up = self.simple_rect(self.white, 1150, 550, 40, 40, 0, 0) 
             self.img(1150, 550, 40, 40, 'flechedown')
-            self.button_rect(self.grey, 1150, 200 - self.scroll, 39, 60, 0)
-            self.simple_rect(self.black, 1150, 200 - self.scroll, 39, 60, 1, 0)
+            self.a= self.button_rect(self.grey, 1150, self.scroll_y, 39, 60, 0)
+            self.simple_rect(self.black, 1150, self.scroll_y, 39, 60, 1, 0)
             self.simple_rect(self.black, 1150, 350, 40, 360, 1, 0)

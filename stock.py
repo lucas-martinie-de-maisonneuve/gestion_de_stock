@@ -46,24 +46,18 @@ class Gestion(Database):
         query = 'UPDATE product SET name=%s, description=%s, price=%s, quantity=%s, id_category=%s WHERE id=%s'
         params = (name, description, price, quantity, id_category, id)
         self.executeQuery(query, params)
-
-    def find_product(self, id):
-        query = f'SELECT * FROM product WHERE id=%s'
-        params = (id,)
-        return self.fetch(query, params)
     
     def get_products_by_category(self, id_category):
         query = f'SELECT * FROM product WHERE id_category=%s'
         params = (id_category,)
         return self.fetch(query, params)
     
-    def get_products_count(self, id_category):
-        query = f'SELECT COUNT(*) FROM product WHERE id_category=%s'
-        params = (id_category,)
-        return self.fetch(query, params)
-    
-    def get_product_price(self, id):
-        query = f'SELECT price FROM product WHERE id=%s'
-        params = (id,)
-        return self.fetch(query, params)
+    def get_highest_product(self):
+        query = 'SELECT * FROM product ORDER BY quantity DESC LIMIT 1'
+        max_capacity_product = self.fetch(query)
+        return max_capacity_product
 
+    def get_last_product(self):
+        query = 'SELECT MAX(id) FROM product'
+        max_id = self.fetch(query)
+        return max_id
