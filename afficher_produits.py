@@ -71,6 +71,16 @@ class Afficher_products(Element):
                 self.simple_rect(self.black, 1000, 75, 230, 50,2, 5)
             self.texte(30, 'Modifier produit', self.black, 1000, 75)
             
+            last_product = self.gestion.get_last_product()
+            detail_last_product = last_product[0]
+            self.texte_not_align(20, "Dernier produit ajouté :", (self.black), 80, 250)
+            self.texte_not_align(25, f"{detail_last_product[1]}", (self.black), 120, 280)
+
+            max_product = self.gestion.get_highest_product()
+            detail_highest_product = max_product[0]
+            self.texte_not_align(20, "Produit avec le plus de capacité:", (self.black), 80, 350)
+            self.texte_not_align(25, f"{detail_highest_product[1]} ({detail_highest_product[4]})", (self.black), 120, 380)
+
 
             self.update()
 
@@ -335,7 +345,6 @@ class Afficher_products(Element):
                     elif self.modif_categ.collidepoint(event.pos):
                         self.cate = 5
                     elif self.update_button.collidepoint(event.pos) :
-                        print(str(name), str(description), int(prix), int(quantity), int(self.category_choose), product[0])
                         self.gestion.update_product(str(name), str(description), int(prix), int(quantity), int(self.category_choose), product[0])
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.back_menu_modify.collidepoint(event.pos):
@@ -433,7 +442,6 @@ class Afficher_products(Element):
                     if category_select.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:   
                         self.category_choose = category[0]
                         self.display_choose = category [1]
-                        print(category[0], category[1])    
                     i += 1
                 self.texte(20, "Modifier la catégorie du produit :", self.black,600, 250)
                 if self.category_choose == "":

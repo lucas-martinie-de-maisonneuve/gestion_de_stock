@@ -48,7 +48,6 @@ class Element(Screen):
 
     def event_scroll(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
-            print(self.a)
             if self.button_down.collidepoint(event.pos) and self.scroll_y > 220:
                 self.scroll += 50
             if self.button_up.collidepoint(event.pos) and self.scroll_y < 495:

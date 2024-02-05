@@ -23,11 +23,6 @@ class Gestion(Database):
         params = (id,)
         self.executeQuery(query, params)
     
-    def find_category(self, id):
-        query = f'SELECT * FROM category WHERE id=%s'
-        params = (id,)
-        return self.fetch(query, params)
-    
     def all_product(self):
         query = f'SELECT product.id, product.name, product.description, product.price, product.quantity, category.name AS category FROM product JOIN category ON product.id_category = category.id;'
         return self.fetch(query)
@@ -47,17 +42,22 @@ class Gestion(Database):
         params = (name, description, price, quantity, id_category, id)
         self.executeQuery(query, params)
     
-    def get_products_by_category(self, id_category):
-        query = f'SELECT * FROM product WHERE id_category=%s'
-        params = (id_category,)
-        return self.fetch(query, params)
-    
     def get_highest_product(self):
-        query = 'SELECT * FROM product ORDER BY quantity DESC LIMIT 1'
+        query = 'SELECT * FROM product WHERE quantity = (SELECT MAX(quantity) FROM product)'
         max_capacity_product = self.fetch(query)
         return max_capacity_product
 
     def get_last_product(self):
-        query = 'SELECT MAX(id) FROM product'
-        max_id = self.fetch(query)
-        return max_id
+        query = 'SELECT * FROM product WHERE id = (SELECT MAX(id) FROM product)'
+        last_product = self.fetch(query)
+        return last_product
+    
+    def find_category(self, id):
+        query = f'SELECT * FROM category WHERE id=%s'
+        params = (id,)
+        return self.fetch(query, params)
+    
+    def get_products_by_category(self, id_category):
+        query = f'SELECT * FROM product WHERE id_category=%s'
+        params = (id_category,)
+        return self.fetch(query, params)
