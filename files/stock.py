@@ -1,4 +1,4 @@
-from db import Database
+from files.db import Database
 
 class Gestion(Database):
     def __init__(self):

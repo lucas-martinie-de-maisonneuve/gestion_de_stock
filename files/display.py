@@ -1,6 +1,6 @@
 import pygame
-from stock import Gestion
-from element import Element
+from files.stock import Gestion
+from files.element import Element
 
 class Display(Element):
     def __init__(self):

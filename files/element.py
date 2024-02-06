@@ -1,5 +1,5 @@
 import pygame
-from screen import Screen
+from files.screen import Screen
 
 class Element(Screen):
     def __init__(self):
